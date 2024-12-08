@@ -6,7 +6,7 @@ spring:
     ansi:
       enabled: always
   datasource:
-    url: 'jdbc:h2:mem:library'
+    url: 'jdbc:h2:mem:pulleytestdb'
     username: 'user'
     password: ''
     driver-class-name: org.h2.Driver
@@ -14,7 +14,7 @@ spring:
     hibernate:
       ddl-auto: create
     # JPA DDL configuration properties
-    generate-ddl: false
+    generate-ddl: true
     # OSIV configuration property
     open-in-view: false
     show-sql: true
@@ -30,7 +30,6 @@ spring:
 
 logging:
   level:
-    root: debug
     org:
       hibernate:
         sql: debug

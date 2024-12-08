@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class JpaConfig(
-    @PersistenceContext
-    private val entityManager: EntityManager
+    @PersistenceContext private val entityManager: EntityManager
 ) {
 
     @Bean

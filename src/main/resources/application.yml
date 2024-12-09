@@ -6,15 +6,15 @@ spring:
     ansi:
       enabled: always
   datasource:
-    url: 'jdbc:h2:mem:pulleytestdb'
-    username: 'user'
-    password: ''
     driver-class-name: org.h2.Driver
+    url: 'jdbc:h2:mem:pulleytestdb;DB_CLOSE_DELAY=-1'
+    username: 'sa'
+    password: ''
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     # JPA DDL configuration properties
-    generate-ddl: true
+    generate-ddl: false
     # OSIV configuration property
     open-in-view: false
     show-sql: true
@@ -23,6 +23,12 @@ spring:
         default_batch_fetch_size: 100
         format_sql: true
         show_sql: true
+    database: h2
+  # script 파일로 데이터를 초기화하는 옵션 활성화
+  sql:
+    init:
+      platform: h2
+      mode: always
   h2:
     console:
       enabled: true

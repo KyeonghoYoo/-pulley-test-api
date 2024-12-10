@@ -11,6 +11,7 @@ import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionRepository
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
+import me.kyeong.pulleytestapi.dto.response.SettingResponse
 import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.repository.problem.ProblemQueryRepository
 import me.kyeong.pulleytestapi.util.findByIdOrElseThrow
@@ -89,13 +90,19 @@ class PulleyServiceImpl(
     }
 
     @Transactional
-    override fun setWorkbook(workbookId: Long, studentIds: List<Long>) {
+    override fun setWorkbook(workbookId: Long, studentIds: List<Long>): SettingResponse {
         val workbookEntity = workbookRepository.findByIdOrElseThrow(workbookId)
         val studentEntities = userRepository.findAllById(studentIds)
-        settingRepository.saveAll(
+        val settingEntities = settingRepository.saveAll(
             studentEntities
                 .filter { student -> student.settings.none { setting -> setting.workbook.id == workbookEntity.id } }
                 .map { SettingEntity(it, workbookEntity) }
         )
+        return SettingResponse.of(settingEntities)
+    }
+
+    override fun getProblemsInSettingWorkbook(settingId: Long): WorkbookResponse {
+        val settingEntity = settingRepository.findByIdOrElseThrow(settingId)
+        return WorkbookResponse.of(settingEntity.workbook)
     }
 }

@@ -3,6 +3,7 @@ package me.kyeong.pulleytestapi.controller
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
+import me.kyeong.pulleytestapi.dto.response.SettingResponse
 import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.service.PulleyService
 import me.kyeong.pulleytestapi.util.ApiResult
@@ -44,17 +45,18 @@ class PulleyController(
     fun setWorkbook(
         @PathVariable pieceId: Long,
         @RequestParam studentIds: List<Long>
-    ): ApiResult<Unit> {
-        pulleyService.setWorkbook(pieceId, studentIds)
-        return success(apiStatus = ApiStatus.CREATED)
+    ): ApiResult<SettingResponse> {
+        return success(response = pulleyService.setWorkbook(pieceId, studentIds), apiStatus = ApiStatus.CREATED)
     }
 
     /**
      * 학습지의 문제 조회하기
      */
     @GetMapping("/piece/problems")
-    fun getProblemsInWorkbook() {
-        // TODO 로직 작성 예정
+    fun getProblemsInSettingWorkbook(
+        @RequestParam pieceId: Long
+    ): ApiResult<WorkbookResponse> {
+        return success(response = pulleyService.getProblemsInSettingWorkbook(pieceId))
     }
 
     /**

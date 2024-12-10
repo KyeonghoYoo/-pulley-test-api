@@ -1,8 +1,18 @@
 package me.kyeong.pulleytestapi.service
 
+import me.kyeong.pulleytestapi.domain.problem.ProblemRepository
+import me.kyeong.pulleytestapi.domain.user.UserRepository
+import me.kyeong.pulleytestapi.domain.workbook.WorkbookEntity
+import me.kyeong.pulleytestapi.domain.workbook.WorkbookRepository
+import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
+import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionRepository
+import me.kyeong.pulleytestapi.dto.ProblemDto
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
+import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
+import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.repository.problem.ProblemQueryRepository
+import me.kyeong.pulleytestapi.util.findByIdOrElseThrow
 import me.kyeong.pulleytestapi.util.logger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -10,7 +20,11 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class PulleyServiceImpl(
-    private val problemQueryRepository: ProblemQueryRepository
+    private val userResponse: UserRepository,
+    private val problemRepository: ProblemRepository,
+    private val problemQueryRepository: ProblemQueryRepository,
+    private val workbookRepository: WorkbookRepository,
+    private val inclusionRepository: InclusionRepository
 ) : PulleyService {
 
     val log = logger()
@@ -54,5 +68,20 @@ class PulleyServiceImpl(
                 middleLevelProblemCount,
                 highLevelProblemCount
             ))
+    }
+
+    @Transactional
+    override fun createWorkbook(request: WorkBookCreateRequest): WorkbookResponse {
+        val (userId, workbookName, problemIdList) = request
+        val usersEntity = userResponse.findByIdOrElseThrow(userId)
+        val workbookEntity = workbookRepository.save(WorkbookEntity(name = workbookName, user = usersEntity))
+
+        val inclusionEntities = inclusionRepository.saveAll(
+            problemRepository.findAllById(problemIdList)
+                .map { problemEntity -> InclusionEntity(workbookEntity, problemEntity) }
+        )
+        workbookEntity.addAllInclusions(inclusionEntities)
+
+        return WorkbookResponse.of(workbookEntity)
     }
 }

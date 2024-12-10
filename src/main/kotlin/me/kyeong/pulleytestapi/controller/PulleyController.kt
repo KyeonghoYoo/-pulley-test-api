@@ -1,9 +1,13 @@
 package me.kyeong.pulleytestapi.controller
 
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
+import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
+import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.service.PulleyService
 import me.kyeong.pulleytestapi.util.ApiResult
+import me.kyeong.pulleytestapi.util.ApiStatus
+import me.kyeong.pulleytestapi.util.logger
 import me.kyeong.pulleytestapi.util.success
 import org.springframework.web.bind.annotation.*
 
@@ -11,6 +15,8 @@ import org.springframework.web.bind.annotation.*
 class PulleyController(
     val pulleyService: PulleyService
 ) {
+    val log = logger()
+
     /**
      * 문제 조회
      */
@@ -25,8 +31,10 @@ class PulleyController(
      * 학습지 생성
      */
     @PostMapping("/piece")
-    fun createWorkbook() {
-        // TODO 로직 작성 예정
+    fun createWorkbook(
+        @RequestBody request: WorkBookCreateRequest
+    ): ApiResult<WorkbookResponse> {
+        return success(response = pulleyService.createWorkbook(request), apiStatus = ApiStatus.CREATED)
     }
 
     /**

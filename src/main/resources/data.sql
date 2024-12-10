@@ -1,3 +1,13 @@
+insert into users (type)
+values ('TEACHER'),
+       ('TEACHER'),
+       ('STUDENT'),
+       ('STUDENT'),
+       ('STUDENT'),
+       ('STUDENT'),
+       ('STUDENT'),
+       ('STUDENT');
+
 insert into problem (problem_id, unit_code, level, type, answer)
 values (1001,	'uc1580',	2,	'SELECTION',	1),
     (1002,	'uc1580',	2,	'SELECTION',	1),

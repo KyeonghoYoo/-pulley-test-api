@@ -4,6 +4,8 @@ drop table if exists problem cascade;
 drop table if exists setting cascade;
 drop table if exists users cascade;
 drop table if exists workbook cascade;
+drop sequence if exists inclusion_seq;
+create sequence inclusion_seq start with 1 increment by 100;
 
 create table grading (
                          status bigint,
@@ -43,6 +45,7 @@ create table workbook (
                           name varchar(255),
                           primary key (workbook_id)
 );
+
 alter table if exists problem
     alter column problem_id restart with 1551;
 alter table if exists grading

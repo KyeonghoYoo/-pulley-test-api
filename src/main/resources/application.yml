@@ -7,7 +7,7 @@ spring:
       enabled: always
   datasource:
     driver-class-name: org.h2.Driver
-    url: 'jdbc:h2:mem:pulleytestdb;DB_CLOSE_DELAY=-1'
+    url: 'jdbc:h2:mem:pulleytestdb;DB_CLOSE_DELAY=-1' # rewriteBatchedStatements=true, Insert 합치기 옵션 적용시 벌크 인서트 가능
     username: 'sa'
     password: ''
   jpa:
@@ -23,6 +23,15 @@ spring:
         default_batch_fetch_size: 100
         format_sql: true
         show_sql: true
+        order_inserts: true
+        order_updates: true
+        id:
+          optimizer:
+            pooled:
+              preferred: pooled-lo
+        jdbc:
+          batch_size: 100
+          batch_versioned_data: true
     database: h2
   # script 파일로 데이터를 초기화하는 옵션 활성화
   sql:

@@ -1,6 +1,8 @@
 package me.kyeong.pulleytestapi.domain.workbook
 
 import jakarta.persistence.*
+import me.kyeong.pulleytestapi.domain.user.UsersEntity
+import me.kyeong.pulleytestapi.domain.user.setting.SettingEntity
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 
 /**
@@ -19,11 +21,11 @@ class WorkbookEntity(
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    var user: me.kyeong.pulleytestapi.domain.user.UsersEntity,
+    var user: UsersEntity,
     @OneToMany(mappedBy = "workbook")
     var inclusions: MutableList<InclusionEntity> = ArrayList(),
     @OneToMany(mappedBy = "workbook")
-    var settings: MutableList<me.kyeong.pulleytestapi.domain.user.setting.SettingEntity> = ArrayList(),
+    var settings: MutableList<SettingEntity> = ArrayList(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +34,12 @@ class WorkbookEntity(
 ) {
     init {
         require(name.isNotBlank()) { "이름은 비어있을 수 없습니다." }
+    }
+
+    fun addInclusion(inclusion: InclusionEntity) {
+        this.inclusions.add(inclusion)
+    }
+    fun addAllInclusions(inclusions: List<InclusionEntity>) {
+        this.inclusions.addAll(inclusions)
     }
 }

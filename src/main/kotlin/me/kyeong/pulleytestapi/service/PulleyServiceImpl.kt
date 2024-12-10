@@ -13,10 +13,12 @@ import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionRepository
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.SettingWorkbookGradeRequest
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
+import me.kyeong.pulleytestapi.dto.response.AnalyzeResponse
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
 import me.kyeong.pulleytestapi.dto.response.SettingResponse
 import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.repository.problem.ProblemQueryRepository
+import me.kyeong.pulleytestapi.repository.workbook.WorkbookQueryRepository
 import me.kyeong.pulleytestapi.util.failOnFindingById
 import me.kyeong.pulleytestapi.util.findByIdOrElseThrow
 import me.kyeong.pulleytestapi.util.logger
@@ -30,6 +32,7 @@ class PulleyServiceImpl(
     private val problemRepository: ProblemRepository,
     private val problemQueryRepository: ProblemQueryRepository,
     private val workbookRepository: WorkbookRepository,
+    private val workbookQueryRepository: WorkbookQueryRepository,
     private val inclusionRepository: InclusionRepository,
     private val settingRepository: SettingRepository,
     private val gradingRepository: GradingRepository,
@@ -38,6 +41,9 @@ class PulleyServiceImpl(
 
     val log = logger()
 
+    /**
+     * 문제 조회
+     */
     override fun getProblems(searchCondition: ProblemSearchCondition): ProblemResponse {
         val totalCount = searchCondition.totalCount
         val level = searchCondition.level
@@ -79,6 +85,9 @@ class PulleyServiceImpl(
             ))
     }
 
+    /**
+     * 학습지 생성
+     */
     @Transactional
     override fun createWorkbook(request: WorkBookCreateRequest): WorkbookResponse {
         val (userId, workbookName, problemIdList) = request
@@ -94,6 +103,9 @@ class PulleyServiceImpl(
         return WorkbookResponse.of(workbookEntity)
     }
 
+    /**
+     * 학생에게 학습지 출제하기
+     */
     @Transactional
     override fun setWorkbook(workbookId: Long, studentIds: List<Long>): SettingResponse {
         val workbookEntity = workbookRepository.findByIdOrElseThrow(workbookId)
@@ -106,11 +118,17 @@ class PulleyServiceImpl(
         return SettingResponse.of(settingEntities)
     }
 
+    /**
+     * 학습지의 문제 조회하기
+     */
     override fun getProblemsInSettingWorkbook(settingId: Long): WorkbookResponse {
         val settingEntity = settingRepository.findByIdOrElseThrow(settingId)
         return WorkbookResponse.of(settingEntity.workbook)
     }
 
+    /**
+     * 채점하기
+     */
     @Transactional
     override fun gradeSettingWorkbook(settingId: Long, request: SettingWorkbookGradeRequest) {
         val settingEntity = settingRepository.findSettingByIdFetchJoinGrading(settingId)
@@ -135,6 +153,16 @@ class PulleyServiceImpl(
         gradingRepository.saveAll(
             gradingMap.entries
                 .map { GradingEntity(it.value, settingEntity, problemRepository.getReferenceById(it.key)) }
+        )
+    }
+
+    override fun getAnalyzeOfWorkbook(workbookId: Long): AnalyzeResponse {
+        val workbookEntity = workbookRepository.findByIdOrElseThrow(workbookId)
+        return AnalyzeResponse(
+            workbookEntity.id,
+            workbookEntity.name,
+            workbookQueryRepository.analyzeWorkbookStudentInfo(workbookId),
+            workbookQueryRepository.analyzeWorkbookCorrectAnswerRate(workbookId)
         )
     }
 }

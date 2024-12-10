@@ -2,6 +2,7 @@ package me.kyeong.pulleytestapi.domain.problem
 
 import jakarta.persistence.*
 import me.kyeong.pulleytestapi.config.ProblemLevelConverter
+import me.kyeong.pulleytestapi.domain.user.grading.GradingEntity
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 
 /**
@@ -33,6 +34,8 @@ class ProblemEntity(
 
     @OneToMany(mappedBy = "problem")
     var inclusions: MutableList<InclusionEntity> = ArrayList(),
+    @OneToMany(mappedBy = "problem")
+    var gradings: MutableList<GradingEntity> = ArrayList(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

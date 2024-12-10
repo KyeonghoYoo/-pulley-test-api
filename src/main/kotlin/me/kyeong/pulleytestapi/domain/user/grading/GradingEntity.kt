@@ -3,7 +3,6 @@ package me.kyeong.pulleytestapi.domain.user.grading
 import jakarta.persistence.*
 import me.kyeong.pulleytestapi.domain.problem.ProblemEntity
 import me.kyeong.pulleytestapi.domain.user.setting.SettingEntity
-import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 
 /**
  * 채점 엔티티

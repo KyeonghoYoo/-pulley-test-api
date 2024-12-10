@@ -3,6 +3,7 @@ package me.kyeong.pulleytestapi.controller
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.SettingWorkbookGradeRequest
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
+import me.kyeong.pulleytestapi.dto.response.AnalyzeResponse
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
 import me.kyeong.pulleytestapi.dto.response.SettingResponse
 import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
@@ -76,7 +77,9 @@ class PulleyController(
      * 학습지 학습 통계 분석하기
      */
     @GetMapping("/piece/analyze")
-    fun getAnalyzeOfWorkbook() {
-        // TODO 로직 작성 예정
+    fun getAnalyzeOfWorkbook(
+        @RequestParam pieceId: Long
+    ): ApiResult<AnalyzeResponse> {
+        return success(pulleyService.getAnalyzeOfWorkbook(pieceId))
     }
 }

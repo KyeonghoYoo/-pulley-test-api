@@ -2,6 +2,7 @@ package me.kyeong.pulleytestapi.domain.workbook.inclusion
 
 import jakarta.persistence.*
 import me.kyeong.pulleytestapi.domain.problem.ProblemEntity
+import me.kyeong.pulleytestapi.domain.user.grading.GradingEntity
 import me.kyeong.pulleytestapi.domain.workbook.WorkbookEntity
 
 /**

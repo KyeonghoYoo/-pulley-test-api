@@ -2,6 +2,8 @@ package me.kyeong.pulleytestapi.service
 
 import me.kyeong.pulleytestapi.domain.problem.ProblemRepository
 import me.kyeong.pulleytestapi.domain.user.UserRepository
+import me.kyeong.pulleytestapi.domain.user.grading.GradingEntity
+import me.kyeong.pulleytestapi.domain.user.grading.GradingRepository
 import me.kyeong.pulleytestapi.domain.user.setting.SettingEntity
 import me.kyeong.pulleytestapi.domain.user.setting.SettingRepository
 import me.kyeong.pulleytestapi.domain.workbook.WorkbookEntity
@@ -9,11 +11,13 @@ import me.kyeong.pulleytestapi.domain.workbook.WorkbookRepository
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionRepository
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
+import me.kyeong.pulleytestapi.dto.request.SettingWorkbookGradeRequest
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
 import me.kyeong.pulleytestapi.dto.response.SettingResponse
 import me.kyeong.pulleytestapi.dto.response.WorkbookResponse
 import me.kyeong.pulleytestapi.repository.problem.ProblemQueryRepository
+import me.kyeong.pulleytestapi.util.failOnFindingById
 import me.kyeong.pulleytestapi.util.findByIdOrElseThrow
 import me.kyeong.pulleytestapi.util.logger
 import org.springframework.stereotype.Service
@@ -28,6 +32,7 @@ class PulleyServiceImpl(
     private val workbookRepository: WorkbookRepository,
     private val inclusionRepository: InclusionRepository,
     private val settingRepository: SettingRepository,
+    private val gradingRepository: GradingRepository,
     private val userRepository: UserRepository
 ) : PulleyService {
 
@@ -104,5 +109,32 @@ class PulleyServiceImpl(
     override fun getProblemsInSettingWorkbook(settingId: Long): WorkbookResponse {
         val settingEntity = settingRepository.findByIdOrElseThrow(settingId)
         return WorkbookResponse.of(settingEntity.workbook)
+    }
+
+    @Transactional
+    override fun gradeSettingWorkbook(settingId: Long, request: SettingWorkbookGradeRequest) {
+        val settingEntity = settingRepository.findSettingByIdFetchJoinGrading(settingId)
+            .orElseThrow { failOnFindingById(settingId) }
+        val gradingList = request.gradingList
+
+        val gradingMap = mutableMapOf(*gradingList.map { it.problemId to it.grade }.toTypedArray())
+        println(gradingMap)
+
+        val inclusionEntities =
+            inclusionRepository.findByWorkbookIdAndProblemIdIn(settingEntity.workbook.id, gradingMap.keys)
+        require (inclusionEntities.map { it.problem.id }.containsAll(gradingMap.keys)) {
+            "학습지에 존재하지 않는 문제가 포함되어 있습니다."
+        }
+
+        settingEntity.gradings
+            .filter { gradingMap.keys.contains(it.problem.id) }
+            .forEach {
+                it.updateCorrect(gradingMap[it.problem.id])
+                gradingMap.remove(it.problem.id)
+            }
+        gradingRepository.saveAll(
+            gradingMap.entries
+                .map { GradingEntity(it.value, settingEntity, problemRepository.getReferenceById(it.key)) }
+        )
     }
 }

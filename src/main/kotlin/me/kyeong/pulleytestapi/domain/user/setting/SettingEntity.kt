@@ -2,6 +2,7 @@ package me.kyeong.pulleytestapi.domain.user.setting
 
 import jakarta.persistence.*
 import me.kyeong.pulleytestapi.domain.user.UsersEntity
+import me.kyeong.pulleytestapi.domain.user.grading.GradingEntity
 import me.kyeong.pulleytestapi.domain.workbook.WorkbookEntity
 
 /**
@@ -16,6 +17,9 @@ class SettingEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workbook_id", nullable = false)
     var workbook: WorkbookEntity,
+
+    @OneToMany(mappedBy = "setting")
+    var gradings: MutableList<GradingEntity> = ArrayList(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

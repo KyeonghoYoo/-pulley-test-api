@@ -1,6 +1,7 @@
 package me.kyeong.pulleytestapi.controller
 
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
+import me.kyeong.pulleytestapi.dto.request.SettingWorkbookGradeRequest
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
 import me.kyeong.pulleytestapi.dto.response.SettingResponse
@@ -56,15 +57,19 @@ class PulleyController(
     fun getProblemsInSettingWorkbook(
         @RequestParam pieceId: Long
     ): ApiResult<WorkbookResponse> {
-        return success(response = pulleyService.getProblemsInSettingWorkbook(pieceId))
+        return success(pulleyService.getProblemsInSettingWorkbook(pieceId))
     }
 
     /**
-     * 채점하가
+     * 채점하기
      */
     @PutMapping("/piece/problems")
-    fun gradeWorkbook(@RequestBody pieceId: String) {
-        // TODO 로직 작성 예정
+    fun gradeSettingWorkbook(
+        @RequestBody request: SettingWorkbookGradeRequest,
+        @RequestParam pieceId: Long
+    ): ApiResult<Unit> {
+        pulleyService.gradeSettingWorkbook(pieceId, request)
+        return success()
     }
 
     /**

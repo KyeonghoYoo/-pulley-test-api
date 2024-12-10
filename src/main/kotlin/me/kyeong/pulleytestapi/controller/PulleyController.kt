@@ -41,8 +41,12 @@ class PulleyController(
      * 학생에게 학습지 출제하기
      */
     @PostMapping("/piece/{pieceId}")
-    fun setWorkbook(@PathVariable pieceId: String) {
-        // TODO 로직 작성 예정
+    fun setWorkbook(
+        @PathVariable pieceId: Long,
+        @RequestParam studentIds: List<Long>
+    ): ApiResult<Unit> {
+        pulleyService.setWorkbook(pieceId, studentIds)
+        return success(apiStatus = ApiStatus.CREATED)
     }
 
     /**

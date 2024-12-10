@@ -9,4 +9,5 @@ interface PulleyService {
 
     fun getProblems(searchCondition: ProblemSearchCondition): ProblemResponse
     fun createWorkbook(request: WorkBookCreateRequest): WorkbookResponse
+    fun setWorkbook(workbookId: Long, studentIds: List<Long>)
 }

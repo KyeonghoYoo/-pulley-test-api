@@ -2,11 +2,12 @@ package me.kyeong.pulleytestapi.service
 
 import me.kyeong.pulleytestapi.domain.problem.ProblemRepository
 import me.kyeong.pulleytestapi.domain.user.UserRepository
+import me.kyeong.pulleytestapi.domain.user.setting.SettingEntity
+import me.kyeong.pulleytestapi.domain.user.setting.SettingRepository
 import me.kyeong.pulleytestapi.domain.workbook.WorkbookEntity
 import me.kyeong.pulleytestapi.domain.workbook.WorkbookRepository
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionRepository
-import me.kyeong.pulleytestapi.dto.ProblemDto
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
 import me.kyeong.pulleytestapi.dto.response.ProblemResponse
@@ -24,7 +25,9 @@ class PulleyServiceImpl(
     private val problemRepository: ProblemRepository,
     private val problemQueryRepository: ProblemQueryRepository,
     private val workbookRepository: WorkbookRepository,
-    private val inclusionRepository: InclusionRepository
+    private val inclusionRepository: InclusionRepository,
+    private val settingRepository: SettingRepository,
+    private val userRepository: UserRepository
 ) : PulleyService {
 
     val log = logger()
@@ -83,5 +86,16 @@ class PulleyServiceImpl(
         workbookEntity.addAllInclusions(inclusionEntities)
 
         return WorkbookResponse.of(workbookEntity)
+    }
+
+    @Transactional
+    override fun setWorkbook(workbookId: Long, studentIds: List<Long>) {
+        val workbookEntity = workbookRepository.findByIdOrElseThrow(workbookId)
+        val studentEntities = userRepository.findAllById(studentIds)
+        settingRepository.saveAll(
+            studentEntities
+                .filter { student -> student.settings.none { setting -> setting.workbook.id == workbookEntity.id } }
+                .map { SettingEntity(it, workbookEntity) }
+        )
     }
 }

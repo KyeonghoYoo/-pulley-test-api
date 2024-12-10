@@ -1,7 +1,7 @@
 package me.kyeong.pulleytestapi.domain.problem
 
 enum class ProblemLevel(
-    val level: Int
+    val value: Int
 ) {
     ONE(1),
     TWO(2),
@@ -12,6 +12,6 @@ enum class ProblemLevel(
 
     companion object {
         fun valueOf(value: String): ProblemLevel = entries.single { it.name.equals(value, true) }
-        fun valueOf(value: Int): ProblemLevel = entries.single { it.level == value }
+        fun valueOf(value: Int): ProblemLevel = entries.single { it.value == value }
     }
 }

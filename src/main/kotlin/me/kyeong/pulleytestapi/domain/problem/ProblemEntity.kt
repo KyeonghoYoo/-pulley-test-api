@@ -1,6 +1,7 @@
 package me.kyeong.pulleytestapi.domain.problem
 
 import jakarta.persistence.*
+import me.kyeong.pulleytestapi.config.ProblemLevelConverter
 import me.kyeong.pulleytestapi.domain.workbook.inclusion.InclusionEntity
 
 /**
@@ -17,7 +18,7 @@ class ProblemEntity(
      * 난이도, 높은 숫자일수록 어려움, { 1, 2, 3, ,4, 5 }
      * @see ProblemLevel
      */
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = ProblemLevelConverter::class)
     var level: ProblemLevel,
     /**
      * 문제유형, 전체, 주관식, 객관식, { ALL, SUBJECTIVE, SELECTION }

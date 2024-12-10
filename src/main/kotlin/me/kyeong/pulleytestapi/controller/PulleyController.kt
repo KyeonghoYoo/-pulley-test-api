@@ -1,17 +1,24 @@
 package me.kyeong.pulleytestapi.controller
 
+import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
+import me.kyeong.pulleytestapi.dto.response.ProblemResponse
+import me.kyeong.pulleytestapi.service.PulleyService
+import me.kyeong.pulleytestapi.util.ApiResult
+import me.kyeong.pulleytestapi.util.success
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class PulleyController(
-
+    val pulleyService: PulleyService
 ) {
     /**
      * 문제 조회
      */
     @GetMapping("/problems")
-    fun getProblems() {
-        // TODO 로직 작성 예정
+    fun getProblems(
+        @ModelAttribute searchCondition: ProblemSearchCondition
+    ): ApiResult<ProblemResponse> {
+        return success(pulleyService.getProblems(searchCondition))
     }
 
     /**

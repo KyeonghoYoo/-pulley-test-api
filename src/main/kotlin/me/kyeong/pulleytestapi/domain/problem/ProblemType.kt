@@ -7,6 +7,6 @@ enum class ProblemType {
     ;
 
     companion object {
-        fun valueOf(value: String): ProblemType = entries.single { it.name.equals(value, true) }
+        fun valueOf(value: String): ProblemType = entries.single { value.equals(it.name, true) }
     }
 }

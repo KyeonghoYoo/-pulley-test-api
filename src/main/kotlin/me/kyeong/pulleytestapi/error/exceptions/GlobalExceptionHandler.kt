@@ -26,6 +26,13 @@ class GlobalExceptionHandler {
         return ResponseEntity<ApiResult<Unit>>(fail(message, status), headers, status)
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+        e: IllegalArgumentException
+    ): ResponseEntity<ApiResult<Unit>> {
+        log.error("handleIllegalArgumentException", e)
+        return newResponse(e.message ?: ApiStatus.BAD_REQUEST.message, HttpStatus.BAD_REQUEST)
+    }
 
     @ExceptionHandler(Exception::class)
     fun handleException(

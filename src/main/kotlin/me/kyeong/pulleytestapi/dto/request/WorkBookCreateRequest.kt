@@ -1,8 +1,10 @@
 package me.kyeong.pulleytestapi.dto.request
 
+import jakarta.validation.constraints.Max
+
 
 data class WorkBookCreateRequest(
-    val userId: Long,
+    @Max(50L) val userId: Long,
     val workbookName: String,
     val problemIdList: List<Long>
 ) {

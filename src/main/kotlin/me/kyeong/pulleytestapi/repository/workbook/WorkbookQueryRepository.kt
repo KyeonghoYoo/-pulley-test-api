@@ -1,6 +1,5 @@
 package me.kyeong.pulleytestapi.repository.workbook
 
-import com.querydsl.core.types.dsl.Expressions.asNumber
 import com.querydsl.jpa.JPAExpressions.select
 import com.querydsl.jpa.impl.JPAQueryFactory
 import me.kyeong.pulleytestapi.domain.problem.QProblemEntity.problemEntity

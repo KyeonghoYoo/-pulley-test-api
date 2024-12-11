@@ -1,5 +1,6 @@
 package me.kyeong.pulleytestapi.controller
 
+import jakarta.validation.Valid
 import me.kyeong.pulleytestapi.dto.request.ProblemSearchCondition
 import me.kyeong.pulleytestapi.dto.request.SettingWorkbookGradeRequest
 import me.kyeong.pulleytestapi.dto.request.WorkBookCreateRequest
@@ -35,7 +36,7 @@ class PulleyController(
      */
     @PostMapping("/piece")
     fun createWorkbook(
-        @RequestBody request: WorkBookCreateRequest
+        @Valid @RequestBody request: WorkBookCreateRequest
     ): ApiResult<WorkbookResponse> {
         return success(response = pulleyService.createWorkbook(request), apiStatus = ApiStatus.CREATED)
     }
